@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Settings, HelpCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -58,27 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
       <SidebarFooter>
         <SidebarMenu>
-         
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <button className="flex w-full items-center gap-3 text-left">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Settings className="size-4" />
-                </div>
-                <span className="font-medium">Settings</span>
-              </button>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <button className="flex w-full items-center gap-3 text-left">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <HelpCircle className="size-4" />
-                </div>
-                <span className="font-medium">Help</span>
-              </button>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {/* Additional sidebar items can be added here in the future */}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
