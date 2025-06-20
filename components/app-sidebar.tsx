@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Github } from "lucide-react"
+import { Settings, HelpCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -30,10 +30,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <Image 
                       src="/Logo 1.svg" 
                       alt="Samrian AI Logo" 
-                      width={120} 
-                      height={40}
+                      width={0}
+                      height={0}
                       priority
-                      className="h-10 w-auto"
+                      className="h-full w-full object-contain"
                     />
                   ) : (
                     <Image 
@@ -61,17 +61,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
          
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="https://github.com/assistant-ui/assistant-ui" target="_blank">
+              <button className="flex w-full items-center gap-3 text-left">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Github className="size-4" />
+                  <Settings className="size-4" />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">GitHub</span>
-                  <span className="">View Source</span>
-                </div>
-              </Link>
+                <span className="font-medium">Settings</span>
+              </button>
             </SidebarMenuButton>
-            
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <button className="flex w-full items-center gap-3 text-left">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <HelpCircle className="size-4" />
+                </div>
+                <span className="font-medium">Help</span>
+              </button>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
