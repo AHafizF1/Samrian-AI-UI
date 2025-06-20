@@ -6,7 +6,7 @@ import { Thread } from "@/components/assistant-ui/thread";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+
 import { User, LogOut, HelpCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,21 +33,7 @@ export const Assistant = () => {
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Build Your Own ChatGPT UX
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>
-                      Starter Template
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
+
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
