@@ -17,39 +17,79 @@ import {
   SendHorizontalIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSidebar } from "@/components/ui/sidebar";
+import toast, { Toaster } from "react-hot-toast";
+import { useCallback, useState } from "react";
+import { CustomAttachmentAdapter } from "@/lib/attachments/custom-attachment-adapter";
+import { FileUpload } from "./file-upload";
 
 import { Button } from "@/components/ui/button";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 import { ToolFallback } from "./tool-fallback";
 
+// Initialize the attachment adapter
+const attachmentAdapter = new CustomAttachmentAdapter({
+  apiEndpoint: "/api/upload", // Update this to your FastAPI endpoint
+  maxFileSizeMB: 10,
+  allowedFileTypes: [
+    "application/pdf",
+    "text/plain",
+    "text/csv",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/png",
+    "image/jpeg",
+    "image/webp"
+  ]
+});
+
 export const Thread: FC = () => {
+  const { state } = useSidebar();
+  
   return (
     <ThreadPrimitive.Root
       className="bg-background box-border flex h-full flex-col overflow-hidden"
       style={{
-        ["--thread-max-width" as string]: "42rem",
+        ["--thread-max-width" as string]: "48rem",
       }}
     >
-      <ThreadPrimitive.Viewport className="flex h-full flex-col items-center overflow-y-scroll scroll-smooth bg-inherit px-4 pt-8">
-        <ThreadWelcome />
+      <Toaster position="bottom-center" />
+      <ThreadPrimitive.Viewport className="flex h-full flex-col items-center overflow-y-scroll scroll-smooth bg-inherit px-4 pt-8 pb-24">
+        <div className="w-full max-w-[var(--thread-max-width)]">
+          <ThreadWelcome />
 
-        <ThreadPrimitive.Messages
-          components={{
-            UserMessage: UserMessage,
-            EditComposer: EditComposer,
-            AssistantMessage: AssistantMessage,
-          }}
-        />
+          <div className="w-full">
+            <ThreadPrimitive.Messages
+              components={{
+                UserMessage: UserMessage,
+                EditComposer: EditComposer,
+                AssistantMessage: AssistantMessage,
+              }}
+            />
+          </div>
+
+          <ThreadPrimitive.If empty={false}>
+            <div className="min-h-8 flex-grow" />
+          </ThreadPrimitive.If>
+        </div>
 
         <ThreadPrimitive.If empty={false}>
-          <div className="min-h-8 flex-grow" />
+          <div 
+            className={`fixed bottom-6 left-0 right-0 flex w-full flex-col items-center transition-all duration-200 ease-in-out ${
+              state === 'expanded' ? 'md:pl-[16rem]' : 'md:pl-[3rem]'
+            }`}
+          >
+            <div className="w-full max-w-[var(--thread-max-width)] px-4">
+              <div className="relative w-full">
+                <ThreadScrollToBottom />
+                <Composer />
+              </div>
+              <p className="mt-2 text-center text-xs text-muted-foreground">
+                Gemini may display inaccurate info, including about people, so double-check its responses.
+              </p>
+            </div>
+          </div>
         </ThreadPrimitive.If>
-
-        <div className="sticky bottom-0 mt-3 flex w-full max-w-[var(--thread-max-width)] flex-col items-center justify-end rounded-t-lg bg-inherit pb-4">
-          <ThreadScrollToBottom />
-          <Composer />
-        </div>
       </ThreadPrimitive.Viewport>
     </ThreadPrimitive.Root>
   );
@@ -61,9 +101,9 @@ const ThreadScrollToBottom: FC = () => {
       <TooltipIconButton
         tooltip="Scroll to bottom"
         variant="outline"
-        className="absolute -top-8 rounded-full disabled:invisible"
+        className="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background disabled:invisible"
       >
-        <ArrowDownIcon />
+        <ArrowDownIcon className="h-4 w-4" />
       </TooltipIconButton>
     </ThreadPrimitive.ScrollToBottom>
   );
@@ -72,54 +112,78 @@ const ThreadScrollToBottom: FC = () => {
 const ThreadWelcome: FC = () => {
   return (
     <ThreadPrimitive.Empty>
-      <div className="flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
-        <div className="flex w-full flex-grow flex-col items-center justify-center">
-          <p className="mt-4 font-medium">How can I help you today?</p>
+      <div className="flex h-[calc(100vh-200px)] w-full items-center justify-center">
+        <div className="flex w-full max-w-2xl flex-col items-center gap-8 px-4">
+          <p className="text-center text-2xl font-medium text-muted-foreground">How can I help you today?</p>
+          <div className="w-full">
+            <Composer />
+          </div>
         </div>
-        <ThreadWelcomeSuggestions />
       </div>
     </ThreadPrimitive.Empty>
   );
 };
 
-const ThreadWelcomeSuggestions: FC = () => {
-  return (
-    <div className="mt-3 flex w-full items-stretch justify-center gap-4">
-      <ThreadPrimitive.Suggestion
-        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-lg border p-3 transition-colors ease-in"
-        prompt="What is the weather in Tokyo?"
-        method="replace"
-        autoSend
-      >
-        <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
-          What is the weather in Tokyo?
-        </span>
-      </ThreadPrimitive.Suggestion>
-      <ThreadPrimitive.Suggestion
-        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-lg border p-3 transition-colors ease-in"
-        prompt="What is assistant-ui?"
-        method="replace"
-        autoSend
-      >
-        <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
-          What is assistant-ui?
-        </span>
-      </ThreadPrimitive.Suggestion>
-    </div>
-  );
-};
-
 const Composer: FC = () => {
+  const [isUploading, setIsUploading] = useState(false);
+  // react-hot-toast is already imported at the top
+
+  const handleFilesSelected = useCallback(async (selectedFiles: File[]): Promise<void> => {
+    if (selectedFiles.length === 0) return;
+    
+    setIsUploading(true);
+    
+    try {
+      // Upload each file and track progress
+      const uploadPromises = selectedFiles.map(async (file) => {
+        try {
+          await attachmentAdapter.uploadFile(file, (progress) => {
+            // Handle progress updates if needed
+            console.log(`Uploading ${file.name}: ${progress}%`);
+          });
+          return file;
+        } catch (error) {
+          console.error(`Error uploading ${file.name}:`, error);
+          toast.error(`Error uploading ${file.name}: ${error instanceof Error ? error.message : 'Upload failed'}`);
+          return null;
+        }
+      });
+
+      const results = await Promise.all(uploadPromises);
+      const successfulUploads = results.filter(Boolean) as File[];
+      
+      if (successfulUploads.length > 0) {
+        toast.success(`Successfully uploaded ${successfulUploads.length} file(s)`);
+      }
+      
+      return;
+    } catch (error) {
+      console.error('Error in file upload process:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  }, []);
+
   return (
-    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full flex-wrap items-end rounded-lg border bg-inherit px-2.5 shadow-sm transition-colors ease-in">
-      <ComposerPrimitive.Input
-        rows={1}
-        autoFocus
-        placeholder="Write a message..."
-        className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
+    <div className="space-y-2 w-full">
+      <FileUpload 
+        onFilesSelected={handleFilesSelected} 
+        disabled={isUploading}
+        maxFiles={5}
       />
-      <ComposerAction />
-    </ComposerPrimitive.Root>
+      <div className="focus-within:ring-2 focus-within:ring-ring/20 flex w-full items-center rounded-full border bg-background px-4 shadow-lg transition-all duration-200 ease-in-out hover:shadow-xl">
+        <ComposerPrimitive.Input
+          rows={1}
+          autoFocus
+          placeholder="Ask Gemini"
+          className="placeholder:text-muted-foreground max-h-40 w-full resize-none border-none bg-transparent py-4 pl-2 pr-2 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
+        />
+        <div className="flex items-center gap-1">
+          <ComposerAction />
+        </div>
+      </div>
+    </div>
   );
 };
 
