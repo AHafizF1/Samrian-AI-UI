@@ -11,8 +11,6 @@ import {
   SidebarMenu, // Keep SidebarMenu for structure if needed, but not for the logo button
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { SearchPopup } from "@/components/search-popup"
@@ -57,13 +55,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           )}
         </Link>
 
-        {/* Trigger button - always shown on desktop, adjusts position via justify-center/between on SidebarHeader */}
-        {/* The PanelLeftIcon will rotate itself based on sidebar state via its own internal logic if using SidebarTrigger from ui */}
-        {!isMobile && (
-          <SidebarTrigger className={cn(
-            state === 'expanded' ? "ml-2" : "" // Add some space if header is justify-between
-          )} />
-        )}
+        {/* Removed SidebarTrigger button as requested */}
       </SidebarHeader>
       
       {/* SidebarRail is part of the ui/sidebar.tsx component and its visibility is handled there based on props.
