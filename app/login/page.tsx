@@ -39,26 +39,28 @@ export default function LoginPage() {
         ))}
       </div>
 
-      <div className="relative z-10 min-h-screen flex">
-        {/* Left side with logo */}
-        <div className="w-1/3 p-8 flex items-start">
+      {/* Main content container: centers content, stacks on mobile, row on medium+ */}
+      <div className="relative z-10 min-h-screen flex flex-col md:flex-row items-center justify-center p-4 sm:p-8">
+        {/* Left side with logo: centered on mobile, aligns top on medium+ */}
+        <div className="w-full md:w-1/3 flex flex-col items-center md:items-start p-4 md:p-8">
           <div className="p-6">
             <Image
               src="/Logo 1.svg"
               alt="App Logo"
-              width={200}
-              height={200}
+              width={300}
+              height={300}
               className="dark:invert"
             />
           </div>
         </div>
         
-        {/* Right side with login form */}
-        <div className="flex-1 flex items-center justify-center p-8">
+        {/* Right side with login form: centered on mobile and larger screens */}
+        <div className="w-full md:flex-1 flex items-center justify-center p-4 md:p-8">
+          {/* Form container: ensures consistent max-width and padding */}
           <div className="w-full max-w-md bg-black/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-border/20 p-8">
 
-            <div className="pb-6">
-            <h2 className="text-3xl font-bold text-white mb-8 text-left">Login</h2>
+            <div className="pb-6 text-center md:text-left"> {/* Center text on mobile, left on md+ */}
+            <h2 className="text-3xl font-bold text-white mb-8">Login</h2>
             
             {/* Email and Password Form */}
             <div className="space-y-4 mb-6">
