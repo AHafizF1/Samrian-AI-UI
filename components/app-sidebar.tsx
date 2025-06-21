@@ -15,6 +15,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { SearchPopup } from "@/components/search-popup"
+import { ThemeSwitcher } from "@/components/theme-switcher" // Added import
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state } = useSidebar()
   const [isSearchOpen, setIsSearchOpen] = React.useState(false)
@@ -34,7 +36,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     height={32}
                     priority
                     className={cn(
-                      "h-8 w-auto transition-all duration-200",
+                      "h-8 w-auto transition-all duration-200 logo-image",
                       state === 'expanded' && "scale-0 absolute"
                     )}
                   />
@@ -45,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     height={0}
                     priority
                     className={cn(
-                      "h-8 w-auto transition-all duration-200 opacity-0 absolute",
+                      "h-8 w-auto transition-all duration-200 opacity-0 absolute logo-image",
                       state === 'expanded' && "opacity-100 relative"
                     )}
                   />
@@ -90,6 +92,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem className="mt-auto">
+            <ThemeSwitcher />
+          </SidebarMenuItem>
           {/* Additional sidebar items can be added here in the future */}
         </SidebarMenu>
       </SidebarFooter>
