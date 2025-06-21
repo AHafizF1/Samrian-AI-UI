@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Plus, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Sidebar,
   SidebarContent,
@@ -30,26 +31,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       )}>
         {/* Logo Link - it will show small logo (icon) when collapsed or on mobile, full logo when expanded on desktop */}
         <Link href="/" className={cn("flex items-center", state === 'expanded' && !isMobile ? "gap-2" : "")}>
-          <Image
-            src="/logo 2.svg"
-            alt="Samrian AI"
-            width={32}
-            height={32}
-            priority
-            className={cn(
-              "h-8 w-auto transition-all duration-200",
-              (state === 'expanded' && !isMobile) && "hidden"
-            )}
-          />
-          {state === 'expanded' && !isMobile && (
+          <div className={cn(
+            "relative h-8 w-8 flex items-center justify-center",
+            (state === 'expanded' && !isMobile) && "hidden"
+          )}>
             <Image
-              src="/Logo 1.svg"
+              src="/logo 2.svg"
               alt="Samrian AI"
-              width={100}
+              width={32}
               height={32}
               priority
-              className="h-8 w-auto transition-all duration-200"
+              className="h-8 w-auto transition-all duration-200 dark:invert"
             />
+          </div>
+          {state === 'expanded' && !isMobile && (
+            <div className="relative h-8 w-auto">
+              <Image
+                src="/Logo 1.svg"
+                alt="Samrian AI"
+                width={100}
+                height={32}
+                priority
+                className="h-8 w-auto transition-all duration-200 dark:invert"
+              />
+            </div>
           )}
         </Link>
 
@@ -94,7 +99,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail /> {/* Re-adding SidebarRail component here */}
       <SidebarFooter>
         <SidebarMenu>
-          {/* Additional sidebar items can be added here in the future */}
+          <SidebarMenuItem>
+            <div className={cn(
+              "flex items-center justify-center w-full py-2",
+              state === 'expanded' && !isMobile ? "justify-start px-3" : ""
+            )}>
+              <ThemeToggle />
+              {state === 'expanded' && !isMobile && (
+                <span className="ml-2 text-sm">Theme</span>
+              )}
+            </div>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

@@ -176,7 +176,7 @@ const Composer: FC = () => {
         <ComposerPrimitive.Input
           rows={1}
           autoFocus
-          placeholder="Ask Gemini"
+          placeholder="Ask Samrian"
           className="placeholder:text-muted-foreground max-h-40 w-full resize-none border-none bg-transparent py-4 pl-2 pr-2 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
         />
         <div className="flex items-center gap-1">
