@@ -1,6 +1,8 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { Plus, Search } from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
   Sidebar,
   SidebarContent,
@@ -12,10 +14,10 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { ThreadList } from "./assistant-ui/thread-list"
-
+import { SearchPopup } from "@/components/search-popup"
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state } = useSidebar()
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false)
   
   return (
     <Sidebar {...props}>
@@ -24,34 +26,65 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/" className="flex items-center gap-2">
-                <div className="flex items-center justify-center">
-                  {state === 'expanded' ? (
-                    <Image 
-                      src="/Logo 1.svg" 
-                      alt="Samrian AI Logo" 
-                      width={0}
-                      height={0}
-                      priority
-                      className="h-full w-full object-contain"
-                    />
-                  ) : (
-                    <Image 
-                      src="/logo 2.svg" 
-                      alt="Samrian AI Icon" 
-                      width={32} 
-                      height={32}
-                      priority
-                      className="h-8 w-auto"
-                    />
-                  )}
+                <div className="flex items-center justify-center transition-all duration-200">
+                  <Image 
+                    src="/logo 2.svg" 
+                    alt="Samrian AI" 
+                    width={32}
+                    height={32}
+                    priority
+                    className={cn(
+                      "h-8 w-auto transition-all duration-200",
+                      state === 'expanded' && "scale-0 absolute"
+                    )}
+                  />
+                  <Image 
+                    src="/Logo 1.svg" 
+                    alt="Samrian AI" 
+                    width={0}
+                    height={0}
+                    priority
+                    className={cn(
+                      "h-8 w-auto transition-all duration-200 opacity-0 absolute",
+                      state === 'expanded' && "opacity-100 relative"
+                    )}
+                  />
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          
+
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <ThreadList />
+      
+      <SidebarContent className="mt-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton className="w-full justify-start gap-2 text-base font-medium">
+              <Plus className="h-5 w-5" />
+              <span className={cn("transition-opacity duration-200", state === 'collapsed' && "opacity-0")}>
+                New chat
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton 
+              className="w-full justify-start gap-2 text-base font-medium"
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <Search className="h-5 w-5" />
+              <span className={cn("transition-opacity duration-200", state === 'collapsed' && "opacity-0")}>
+                Search chats
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SearchPopup 
+            isOpen={isSearchOpen} 
+            onClose={() => setIsSearchOpen(false)} 
+          />
+        </SidebarMenu>
       </SidebarContent>
       
       <SidebarRail />
