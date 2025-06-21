@@ -119,7 +119,4 @@
   body {
     @apply bg-background text-foreground;
   }
-  .logo-image {
-    @apply dark:invert dark:hue-rotate-180;
-  }
 }
